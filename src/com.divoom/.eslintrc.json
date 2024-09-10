@@ -1,3 +1,154 @@
 {
-  "extends": "athom/homey-app"
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".json", ".node", ".ts", ".d.ts"]
+      }
+    },
+    "node": {
+      "tryExtensions": [".js", ".json", ".node", ".ts", ".d.ts"]
+    }
+  },
+  "root": true,
+  "ignorePatterns": ["projects/**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "athom/homey-app",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+      ],
+      "rules": {
+        "import/extensions": [
+          "error",
+          "ignorePackages",
+          {
+            "js": "never",
+            "jsx": "never",
+            "ts": "never",
+            "tsx": "never"
+          }
+        ],
+        "import/prefer-default-export": "off",
+        "object-curly-newline": "off",
+        "operator-linebreak": "off",
+        "indent": "off",
+        "padded-blocks": "off",
+        "arrow-parens": "off",
+        "implicit-arrow-linebreak": "off",
+        "function-paren-newline": "off",
+        "@typescript-eslint/explicit-function-return-type": "error",
+        "@typescript-eslint/explicit-member-accessibility": [
+          "error",
+          {
+            "accessibility": "explicit",
+            "overrides": {
+              "constructors": "off"
+            }
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "default",
+            "format": ["strictCamelCase"]
+          },
+          {
+            "selector": "import",
+            "format": ["strictCamelCase", "UPPER_CASE", "PascalCase"]
+          },
+          {
+            "selector": "variable",
+            "format": ["strictCamelCase", "UPPER_CASE", "PascalCase"],
+            "modifiers": ["const"]
+          },
+          {
+            "selector": "parameter",
+            "format": ["strictCamelCase"],
+            "leadingUnderscore": "allow"
+          },
+          {
+            "selector": "memberLike",
+            "modifiers": ["private"],
+            "format": ["strictCamelCase"],
+            "leadingUnderscore": "require"
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "classProperty",
+            "format": ["strictCamelCase", "UPPER_CASE", "PascalCase"],
+            "modifiers": ["public", "readonly"]
+          },
+          {
+            "selector": "objectLiteralProperty",
+            "format": null
+          },
+          {
+            "selector": "enumMember",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": ["variable", "parameter"],
+            "format": null,
+            "modifiers": ["destructured"]
+          },
+          {
+            "selector": "interface",
+            "format": ["PascalCase"],
+            "custom": {
+              "regex": "^I[A-Z]",
+              "match": false
+            }
+          }
+        ],
+        "@typescript-eslint/prefer-readonly": "error",
+        "no-restricted-imports": "off",
+        "@typescript-eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/src/*"],
+                "message": "Usage of import from outside the src directory are not allowed"
+              }
+            ]
+          }
+        ],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "ignoreRestSiblings": true,
+            "argsIgnorePattern": "^_"
+          }
+        ],
+        "no-empty-function": [
+          "error",
+          {
+            "allow": ["constructors"]
+          }
+        ],
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "error",
+        "brace-style": "off",
+        "@typescript-eslint/brace-style": "error",
+        "object-shorthand": "error",
+        "curly": "error"
+      }
+    },
+    {
+      "files": ["*.spec.ts"],
+      "rules": {
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
+      }
+    }
+  ]
 }

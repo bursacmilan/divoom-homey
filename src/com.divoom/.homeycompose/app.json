@@ -3,18 +3,14 @@
   "version": "1.0.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
-  "platforms": [
-    "local"
-  ],
+  "platforms": ["local"],
   "name": {
     "en": "Divoom"
   },
   "description": {
     "en": "Adds support for Divoom devices."
   },
-  "category": [
-    "lights"
-  ],
+  "category": ["lights"],
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
