@@ -50,6 +50,112 @@
         ]
       },
       {
+        "id": "play_buzzer",
+        "title": {
+          "en": "Play buzzer"
+        },
+        "titleFormatted": {
+          "en": "Play the buzzer for [[duration]] milliseconds."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "number",
+            "name": "duration",
+            "required": true,
+            "min": 1,
+            "max": 20000,
+            "title": {
+              "en": "Milliseconds"
+            }
+          }
+        ]
+      },
+      {
+        "id": "play_divoom",
+        "title": {
+          "en": "Play a Divoom GIF by name"
+        },
+        "titleFormatted": {
+          "en": "Play a Divoom GIF named [[name]] from the uploaded or liked community GIF collection."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "text",
+            "name": "name",
+            "required": true,
+            "title": {
+              "en": "Name"
+            }
+          }
+        ]
+      },
+      {
+        "id": "set_channel",
+        "title": {
+          "en": "Set channel"
+        },
+        "titleFormatted": {
+          "en": "Set channel to [[channel]]."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "dropdown",
+            "name": "channel",
+            "required": true,
+            "title": {
+              "en": "Channel"
+            },
+            "values": [
+              {
+                "id": "channel_0",
+                "title": {
+                  "en": "Faces"
+                }
+              },
+              {
+                "id": "channel_1",
+                "title": {
+                  "en": "Cloud channel"
+                }
+              },
+              {
+                "id": "channel_2",
+                "title": {
+                  "en": "Visualizer"
+                }
+              },
+              {
+                "id": "channel_3",
+                "title": {
+                  "en": "Custom"
+                }
+              },
+              {
+                "id": "channel_4",
+                "title": {
+                  "en": "Black screen"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
         "id": "send_gif",
         "title": {
           "en": "Display a GIF from the provided URL"
@@ -353,6 +459,28 @@
           },
           "hint": {
             "en": "The IP address of your Divoom Pixoo 64"
+          },
+          "value": ""
+        },
+        {
+          "id": "macAddress",
+          "type": "text",
+          "label": {
+            "en": "MAC Address"
+          },
+          "hint": {
+            "en": "The MAC address of your Divoom Pixoo 64"
+          },
+          "value": ""
+        },
+        {
+          "id": "deviceId",
+          "type": "text",
+          "label": {
+            "en": "Device ID"
+          },
+          "hint": {
+            "en": "The device ID of your Divoom Pixoo 64"
           },
           "value": ""
         }

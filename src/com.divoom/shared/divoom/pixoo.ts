@@ -20,23 +20,31 @@ import { TextScrollEnum } from '../pixoo-commands/models/text-scroll.enum';
 import { TextAlignEnum } from '../pixoo-commands/models/text-align.enum';
 import { SendHttpTextCommand } from '../pixoo-commands/send-http-text.command';
 import { ClearHttpTextCommand } from '../pixoo-commands/clear-http-text.command';
+import { DiscoveryApi } from '../discovery/discovery-api';
+import { SendRemoteCommand } from '../pixoo-commands/send-remote.command';
+import { PlayBuzzerCommand } from '../pixoo-commands/play-buzzer.command';
+import { DivoomCommand } from './divoom-command';
 
 export class Pixoo {
     private readonly _divoomApi: DivoomApi;
     private readonly _simpleClass: SimpleClass;
+    private readonly _discoveryApi: DiscoveryApi;
     private readonly _pixelCount: number;
     private readonly _size: number;
+    private readonly _deviceId: string;
+    private readonly _macAddress: string;
 
     private _counter: number = 0;
     private _textCounter: number = 0;
-    private _buffer: Array<number[]>;
 
-    constructor(ip: string, simpleClass: SimpleClass, size: number) {
+    constructor(ip: string, deviceId: string, macAddress: string, simpleClass: SimpleClass, size: number) {
         this._divoomApi = new DivoomApi(ip);
         this._simpleClass = simpleClass;
+        this._discoveryApi = new DiscoveryApi();
         this._pixelCount = size * size;
         this._size = size;
-        this._buffer = new Array<number[]>(size * size).fill([0, 0, 0]);
+        this._deviceId = deviceId;
+        this._macAddress = macAddress;
     }
 
     public async init(): Promise<void> {
@@ -44,38 +52,54 @@ export class Pixoo {
         await this.clearBuffer();
     }
 
+    public async sendCurrentCommandList(): Promise<void> {
+        await this._divoomApi.sendCurrentCommandList(this._simpleClass);
+    }
+
+    public async playDivoomGif(fileName: string): Promise<void> {
+        const devices = await this._discoveryApi.getAllImages(this._deviceId, this._macAddress, this._simpleClass);
+        const file = devices.find(f => f.FileName === fileName);
+        if (!file) {
+            throw new Error('Divoom-GIF with name not found');
+        }
+
+        await this._divoomApi.addToCommandList(new SendRemoteCommand(file.FileId));
+    }
+
     public getAllConf(): Promise<AllConfModel> {
-        return this._divoomApi.sendCommandAndGet<AllConfModel>(new GetAllConfCommand(), this._simpleClass);
+        return this._divoomApi.sendCommandImmediatelyAndGet<AllConfModel>(new GetAllConfCommand(), this._simpleClass);
     }
 
     public getCurrentChannel(): Promise<CurrentChannelResponse> {
-        return this._divoomApi.sendCommandAndGet<CurrentChannelResponse>(new GetIndexCommand(), this._simpleClass);
+        return this._divoomApi.sendCommandImmediatelyAndGet<CurrentChannelResponse>(new GetIndexCommand(), this._simpleClass);
     }
 
     public setOnOff(on: boolean): Promise<void> {
-        return this._divoomApi.sendCommandAndThrowIfFailed(new OnOffScreenCommand(on), this._simpleClass);
+        return this._divoomApi.addToCommandList(new OnOffScreenCommand(on));
     }
 
     public selectChannel(channel: ChannelEnum): Promise<void> {
-        return this._divoomApi.sendCommandAndThrowIfFailed(new SetIndexCommand(channel), this._simpleClass);
+        return this._divoomApi.addToCommandList(new SetIndexCommand(channel));
     }
 
     public setBrightness(brightness: number): Promise<void> {
-        return this._divoomApi.sendCommandAndThrowIfFailed(new SetBrightnessCommand(brightness), this._simpleClass);
+        return this._divoomApi.addToCommandList(new SetBrightnessCommand(brightness));
     }
 
     public setTimer(status: TimerStatusEnum, minute: number | undefined, second: number | undefined): Promise<void> {
-        return this._divoomApi.sendCommandAndThrowIfFailed(new SetTimerCommand(status, minute, second), this._simpleClass);
+        return this._divoomApi.addToCommandList(new SetTimerCommand(status, minute, second));
+    }
+
+    public playBuzzer(time: number): Promise<void> {
+        return this._divoomApi.addToCommandList(new PlayBuzzerCommand(time));
     }
 
     public async fillAndPush(color: string | number[]): Promise<void> {
-        this._buffer = new Array<number[]>(this._pixelCount).fill(this._parseColor(color));
-        await this._sendBuffer();
+        await this._sendBuffer(new Array<number[]>(this._pixelCount).fill(this._parseColor(color)));
     }
 
     public async sendImageAndPush(url: string): Promise<void> {
-        this._buffer = await this._base64ToPixelMatrix(url);
-        await this._sendBuffer();
+        await this._sendBuffer(await this._base64ToPixelMatrix(url));
     }
 
     public async sendGifAndPush(url: string, speed: number): Promise<void> {
@@ -83,12 +107,12 @@ export class Pixoo {
     }
 
     public async clearText(): Promise<void> {
-        await this._divoomApi.sendCommandAndThrowIfFailed(new ClearHttpTextCommand(), this._simpleClass);
+        await this._divoomApi.addToCommandList(new ClearHttpTextCommand());
         this._textCounter = 0;
     }
 
     public async clearBuffer(): Promise<void> {
-        await this._divoomApi.sendCommandAndThrowIfFailed(new ResetHttpGifIdCommand(), this._simpleClass);
+        await this._divoomApi.addToCommandList(new ResetHttpGifIdCommand());
         this._counter = 0;
     }
 
@@ -107,20 +131,18 @@ export class Pixoo {
             await this.clearText();
         }
 
-        await this._divoomApi.sendCommandAndThrowIfFailed(
+        await this._divoomApi.addToCommandList(
             new SendHttpTextCommand(this._textCounter++, x, y, dir, textWidth, textString, speed, color, align),
-            this._simpleClass,
         );
     }
 
-    private async _sendBuffer(): Promise<void> {
+    private async _sendBuffer(buffer: Array<number[]>): Promise<void> {
         if (this._counter >= 1000) {
             await this.clearBuffer();
         }
 
-        await this._divoomApi.sendCommandAndThrowIfFailed(
-            new SendHttpGifCommand(1, this._size, 0, this._counter++, 1000, Buffer.from(this._buffer.flat()).toString('base64')),
-            this._simpleClass,
+        await this._divoomApi.addToCommandList(
+            new SendHttpGifCommand(1, this._size, 0, this._counter++, 1000, Buffer.from(buffer.flat()).toString('base64')),
         );
     }
 
@@ -130,14 +152,15 @@ export class Pixoo {
         }
 
         const counter = this._counter++;
+        const commands: DivoomCommand[] = [];
         for (let i = 0; i < frames.length; i++) {
             const frame = frames[i];
-
-            await this._divoomApi.sendCommandAndThrowIfFailed(
+            commands.push(
                 new SendHttpGifCommand(frames.length, this._size, i, counter, speed, Buffer.from(frame.flat()).toString('base64')),
-                this._simpleClass,
             );
         }
+
+        await this._divoomApi.addMultipleToCommandList(commands);
     }
 
     private _parseColor(color: string | number[]): number[] {

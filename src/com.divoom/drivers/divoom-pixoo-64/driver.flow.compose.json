@@ -17,6 +17,87 @@
       ]
     },
     {
+      "id": "play_buzzer",
+      "title": {
+        "en": "Play buzzer"
+      },
+      "titleFormatted": {
+        "en": "Play the buzzer for [[duration]] milliseconds."
+      },
+      "args": [
+        {
+          "type": "number",
+          "name": "duration",
+          "required": true,
+          "min": 1,
+          "max": 20000,
+          "title": {
+            "en": "Milliseconds"
+          }
+        }
+      ]
+    },
+    {
+      "id": "play_divoom",
+      "title": {
+        "en": "Play a Divoom GIF by name"
+      },
+      "titleFormatted": {
+        "en": "Play a Divoom GIF named [[name]] from the uploaded or liked community GIF collection."
+      },
+      "args": [
+        {
+          "type": "text",
+          "name": "name",
+          "required": true,
+          "title": {
+            "en": "Name"
+          }
+        }
+      ]
+    },
+    {
+      "id": "set_channel",
+      "title": {
+        "en": "Set channel"
+      },
+      "titleFormatted": {
+        "en": "Set channel to [[channel]]."
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "channel",
+          "required": true,
+          "title": {
+            "en": "Channel"
+          },
+          "values": [
+            {
+              "id": "channel_0",
+              "title": { "en": "Faces" }
+            },
+            {
+              "id": "channel_1",
+              "title": { "en": "Cloud channel" }
+            },
+            {
+              "id": "channel_2",
+              "title": { "en": "Visualizer" }
+            },
+            {
+              "id": "channel_3",
+              "title": { "en": "Custom" }
+            },
+            {
+              "id": "channel_4",
+              "title": { "en": "Black screen" }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "send_gif",
       "title": {
         "en": "Display a GIF from the provided URL"

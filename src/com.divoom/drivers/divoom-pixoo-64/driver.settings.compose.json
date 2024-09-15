@@ -9,5 +9,27 @@
         "en": "The IP address of your Divoom Pixoo 64"
     },
     "value": ""
+  },
+  {
+    "id": "macAddress",
+    "type": "text",
+    "label": {
+      "en": "MAC Address"
+    },
+    "hint": {
+      "en": "The MAC address of your Divoom Pixoo 64"
+    },
+    "value": ""
+  },
+  {
+    "id": "deviceId",
+    "type": "text",
+    "label": {
+      "en": "Device ID"
+    },
+    "hint": {
+      "en": "The device ID of your Divoom Pixoo 64"
+    },
+    "value": ""
   }
 ]

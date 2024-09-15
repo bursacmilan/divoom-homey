@@ -11,15 +11,26 @@ export class Pixoo64Device extends Homey.Device {
     private _pixoo?: Pixoo;
 
     public async onInit(): Promise<void> {
-        this._updateState();
+        this._sendCommandList();
 
         const ipAddress = this.getSetting('ipAddress') as string;
-        if (!ipAddress) {
+        const deviceId = this.getSetting('deviceId') as string;
+        const macAddress = this.getSetting('macAddress') as string;
+
+        if (!ipAddress || !deviceId || !macAddress) {
+            this._pixoo = undefined;
             return;
         }
 
-        this._pixoo = new Pixoo(ipAddress, this, 64);
+        this.log(`ipAddress: ${ipAddress}, deviceId: ${deviceId}, macAddress: ${macAddress}`);
+        this._pixoo = new Pixoo(ipAddress, deviceId, macAddress, this, 64);
         await this._pixoo.init();
+
+        const currentState = await this._pixoo.getAllConf();
+        const currentChannel = await this._pixoo.getCurrentChannel();
+        await this.setCapabilityValue(Capabilities.channel, ChannelHelper.divoomChannelToHomeyChannelOrDefault(currentChannel.SelectIndex));
+        await this.setCapabilityValue(Capabilities.onOff, currentState.LightSwitch !== 0);
+        await this.setCapabilityValue(Capabilities.dim, currentState.Brightness / 100);
 
         this.registerCapabilityListener(Capabilities.onOff, async value => {
             const valueAsBool = value as boolean;
@@ -32,30 +43,25 @@ export class Pixoo64Device extends Homey.Device {
         });
 
         this.registerCapabilityListener(Capabilities.channel, async value => {
-            const valueAsChannel = ChannelHelper.homeyChannelToDivoomChannel(value as string);
-            await this._pixoo?.selectChannel(valueAsChannel ?? ChannelEnum.Faces);
+            await this.setChannel(value as string);
         });
     }
 
-    private _updateState(): void {
+    private _sendCommandList(): void {
         this.homey.setInterval(async () => {
             if (!this._pixoo) {
                 return;
             }
 
             try {
-                const currentState = await this._pixoo.getAllConf();
-                const currentChannel = await this._pixoo.getCurrentChannel();
-
-                await this.setCapabilityValue(
-                    Capabilities.channel,
-                    ChannelHelper.divoomChannelToHomeyChannelOrDefault(currentChannel.SelectIndex),
-                );
-
-                await this.setCapabilityValue(Capabilities.onOff, currentState.LightSwitch !== 0);
-                await this.setCapabilityValue(Capabilities.dim, currentState.Brightness / 100);
+                await this._pixoo.sendCurrentCommandList();
             } catch (_) {}
-        }, 5000);
+        }, 500);
+    }
+
+    public async setChannel(homeyChannel: string): Promise<void> {
+        const valueAsChannel = ChannelHelper.homeyChannelToDivoomChannel(homeyChannel);
+        await this._pixoo?.selectChannel(valueAsChannel ?? ChannelEnum.Faces);
     }
 
     public async startTimer(minutes: number, seconds: number): Promise<void> {
@@ -76,6 +82,14 @@ export class Pixoo64Device extends Homey.Device {
 
     public async sendGifAndPush(url: string, speed: number): Promise<void> {
         await this._pixoo?.sendGifAndPush(url, speed);
+    }
+
+    public async playDivoomGif(name: string): Promise<void> {
+        await this._pixoo?.playDivoomGif(name);
+    }
+
+    public async playBuzzer(time: number): Promise<void> {
+        await this._pixoo?.playBuzzer(time);
     }
 
     public async drawText(
@@ -114,12 +128,15 @@ export class Pixoo64Device extends Homey.Device {
         changedKeys: string[];
     }): Promise<string | void> {
         const ipAddress = newSettings['ipAddress'] as string;
-        if (!ipAddress) {
+        const deviceId = newSettings['deviceId'] as string;
+        const macAddress = newSettings['macAddress'] as string;
+
+        if (!ipAddress || !deviceId || !macAddress) {
             this._pixoo = undefined;
             return;
         }
 
-        this._pixoo = new Pixoo(ipAddress, this, 64);
+        this._pixoo = new Pixoo(ipAddress, deviceId, macAddress, this, 64);
         await this._pixoo.init();
     }
 }

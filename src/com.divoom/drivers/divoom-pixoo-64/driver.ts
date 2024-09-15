@@ -29,6 +29,18 @@ class Pixoo64Driver extends Homey.Driver {
             await args.device.sendImageAndPush(args.url);
         });
 
+        this.homey.flow.getActionCard('play_divoom').registerRunListener(async (args: { device: Pixoo64Device; name: string }) => {
+            await args.device.playDivoomGif(args.name);
+        });
+
+        this.homey.flow.getActionCard('play_buzzer').registerRunListener(async (args: { device: Pixoo64Device; duration: number }) => {
+            await args.device.playBuzzer(args.duration);
+        });
+
+        this.homey.flow.getActionCard('set_channel').registerRunListener(async (args: { device: Pixoo64Device; channel: string }) => {
+            await args.device.setChannel(args.channel);
+        });
+
         this.homey.flow
             .getActionCard('send_gif')
             .registerRunListener(async (args: { device: Pixoo64Device; url: string; speed: number }) => {
@@ -70,7 +82,12 @@ class Pixoo64Driver extends Homey.Driver {
     public async onPairListDevices(): Promise<PairingDevice[]> {
         const devices = await new DiscoveryApi().getDevices();
         return devices.DeviceList.map(
-            device => new PairingDevice(device.DeviceName, { id: device.DeviceId }, { ipAddress: device.DevicePrivateIP }),
+            device =>
+                new PairingDevice(
+                    device.DeviceName,
+                    { id: device.DeviceId },
+                    { ipAddress: device.DevicePrivateIP, deviceId: device.DeviceId, macAddress: device.DeviceMac },
+                ),
         );
     }
 }
