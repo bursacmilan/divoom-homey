@@ -70,6 +70,14 @@ export class Pixoo64Device extends Homey.Device {
         await this._pixoo?.clearText();
     }
 
+    public async sendImageAndPush(url: string): Promise<void> {
+        await this._pixoo?.sendImageAndPush(url);
+    }
+
+    public async sendGifAndPush(url: string, speed: number): Promise<void> {
+        await this._pixoo?.sendGifAndPush(url, speed);
+    }
+
     public async drawText(
         x: number,
         y: number,

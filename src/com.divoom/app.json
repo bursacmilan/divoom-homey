@@ -29,6 +29,62 @@
   "flow": {
     "actions": [
       {
+        "id": "send_image",
+        "title": {
+          "en": "Display an image from the provided URL, automatically resized to 64x64 pixels."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "text",
+            "name": "url",
+            "required": true,
+            "title": {
+              "en": "URL"
+            }
+          }
+        ]
+      },
+      {
+        "id": "send_gif",
+        "title": {
+          "en": "Display a GIF from the provided URL"
+        },
+        "titleFormatted": {
+          "en": "Display a GIF from the provided URL [[url]], automatically resized to 64x64 pixels and trimmed to the first 60 frames. Each frame should be displayed for [[speed]] milliseconds."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "text",
+            "name": "url",
+            "required": true,
+            "title": {
+              "en": "URL"
+            }
+          },
+          {
+            "type": "range",
+            "name": "speed",
+            "min": 1,
+            "max": 10000,
+            "step": 1,
+            "required": true,
+            "title": {
+              "en": "Milliseconds per frame"
+            }
+          }
+        ]
+      },
+      {
         "id": "set_timer",
         "title": {
           "en": "Start a new timer"

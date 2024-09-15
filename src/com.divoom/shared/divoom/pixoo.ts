@@ -1,4 +1,8 @@
 import { SimpleClass } from 'homey';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import sharp from 'sharp';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { decompressFrames, parseGIF } from 'gifuct-js';
 import { DivoomApi } from './divoom-api';
 import { ResetHttpGifIdCommand } from '../pixoo-commands/reset-http-gif-id.command';
 import { SendHttpGifCommand } from '../pixoo-commands/send-http-gif.command';
@@ -69,6 +73,15 @@ export class Pixoo {
         await this._sendBuffer();
     }
 
+    public async sendImageAndPush(url: string): Promise<void> {
+        this._buffer = await this._base64ToPixelMatrix(url);
+        await this._sendBuffer();
+    }
+
+    public async sendGifAndPush(url: string, speed: number): Promise<void> {
+        await this._sendGif(await this._gifToPixelMatrix(url), speed);
+    }
+
     public async clearText(): Promise<void> {
         await this._divoomApi.sendCommandAndThrowIfFailed(new ClearHttpTextCommand(), this._simpleClass);
         this._textCounter = 0;
@@ -111,6 +124,22 @@ export class Pixoo {
         );
     }
 
+    private async _sendGif(frames: Array<Array<number[]>>, speed: number): Promise<void> {
+        if (this._counter >= 1000) {
+            await this.clearBuffer();
+        }
+
+        const counter = this._counter++;
+        for (let i = 0; i < frames.length; i++) {
+            const frame = frames[i];
+
+            await this._divoomApi.sendCommandAndThrowIfFailed(
+                new SendHttpGifCommand(frames.length, this._size, i, counter, speed, Buffer.from(frame.flat()).toString('base64')),
+                this._simpleClass,
+            );
+        }
+    }
+
     private _parseColor(color: string | number[]): number[] {
         if (typeof color === 'string') {
             this._simpleClass.log('Convert color string to rgb');
@@ -133,5 +162,84 @@ export class Pixoo {
         const g = parseInt(hex.slice(2, 4), 16);
         const b = parseInt(hex.slice(4, 6), 16);
         return [r, g, b];
+    }
+
+    private async _base64ToPixelMatrix(url: string): Promise<Array<number[]>> {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Failed to fetch image');
+        }
+
+        const buffer = await response.arrayBuffer();
+        const image = sharp(buffer)
+            .resize(64, 64, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+            .removeAlpha();
+
+        const { data } = await image.raw().toBuffer({ resolveWithObject: true });
+        const pixelArray = [];
+
+        for (let i = 0; i < data.length; i += 3) {
+            pixelArray.push([data[i], data[i + 1], data[i + 2]]);
+        }
+
+        return pixelArray;
+    }
+
+    private async _gifToPixelMatrix(imageUrl: string, maxFrames = 60): Promise<Array<Array<number[]>>> {
+        const response = await fetch(imageUrl);
+        const buffer = await response.arrayBuffer();
+
+        const gif = parseGIF(buffer);
+        const frames = decompressFrames(gif, true).slice(0, maxFrames);
+
+        const fullWidth = gif.lsd.width;
+        const fullHeight = gif.lsd.height;
+        const previousFrame = Buffer.alloc(fullWidth * fullHeight * 4, 0);
+        const pixelArrays = [];
+
+        for (const frame of frames) {
+            // Patch contains the pixel data, dims contains the frame's size and position
+            const { patch, dims } = frame;
+
+            const patchBuffer = Buffer.from(patch);
+            for (let y = 0; y < dims.height; y++) {
+                for (let x = 0; x < dims.width; x++) {
+                    const srcIndex = (y * dims.width + x) * 4;
+                    const destX = dims.left + x;
+                    const destY = dims.top + y;
+                    const destIndex = (destY * fullWidth + destX) * 4;
+
+                    previousFrame[destIndex] = patchBuffer[srcIndex]; // Red
+                    previousFrame[destIndex + 1] = patchBuffer[srcIndex + 1]; // Green
+                    previousFrame[destIndex + 2] = patchBuffer[srcIndex + 2]; // Blue
+                    previousFrame[destIndex + 3] = patchBuffer[srcIndex + 3]; // Alpha
+                }
+            }
+
+            const resizedFrameBuffer = await sharp(previousFrame, {
+                raw: {
+                    width: fullWidth,
+                    height: fullHeight,
+                    channels: 4, // RGBA channels
+                },
+            })
+                .resize(64, 64, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+                .raw()
+                .toBuffer();
+
+            const pixelArray = [];
+            for (let i = 0; i < resizedFrameBuffer.length; i += 4) {
+                const r = resizedFrameBuffer[i];
+                const g = resizedFrameBuffer[i + 1];
+                const b = resizedFrameBuffer[i + 2];
+
+                // Ignore the alpha channel (resizedFrameBuffer[i + 3])
+                pixelArray.push([r, g, b]);
+            }
+
+            pixelArrays.push(pixelArray);
+        }
+
+        return pixelArrays;
     }
 }

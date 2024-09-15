@@ -25,6 +25,16 @@ class Pixoo64Driver extends Homey.Driver {
             await args.device.clearText();
         });
 
+        this.homey.flow.getActionCard('send_image').registerRunListener(async (args: { device: Pixoo64Device; url: string }) => {
+            await args.device.sendImageAndPush(args.url);
+        });
+
+        this.homey.flow
+            .getActionCard('send_gif')
+            .registerRunListener(async (args: { device: Pixoo64Device; url: string; speed: number }) => {
+                await args.device.sendGifAndPush(args.url, args.speed);
+            });
+
         this.homey.flow
             .getActionCard('draw_text')
             .registerRunListener(
