@@ -1,0 +1,197 @@
+{
+  "actions": [
+    {
+      "id": "set_timer",
+      "title": {
+        "en": "Start a new timer"
+      },
+      "titleFormatted": {
+        "en": "Start a timer for [[minutes]] minutes and [[seconds]] seconds."
+      },
+      "args": [
+        {
+          "type": "range",
+          "name": "minutes",
+          "min": 0,
+          "max": 99,
+          "step": 1,
+          "required": true,
+          "title": {
+            "en": "Minutes"
+          }
+        },
+        {
+          "type": "range",
+          "name": "seconds",
+          "min": 0,
+          "max": 59,
+          "step": 1,
+          "required": true,
+          "title": {
+            "en": "Seconds"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stop_timer",
+      "title": {
+        "en": "Stop the current timer"
+      }
+    },
+    {
+      "id": "fill_screen",
+      "title": {
+        "en": "Fill screen with a color"
+      },
+      "titleFormatted": {
+        "en": "Fill the screen with the color [[hex]]."
+      },
+      "args": [
+        {
+          "type": "text",
+          "name": "hex",
+          "required": true,
+          "title": {
+            "en": "Color value (Hex)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "draw_text",
+      "title": {
+        "en": "Render a text"
+      },
+      "titleFormatted": {
+        "en": "Render the text '[[text]]' in the color [[color]], positioned at X: [[x]] and Y: [[y]], with a width of [[textWidth]]. Scroll the text [[direction]] at a speed of [[speed]], aligned to the [[align]]. Clear the current text: [[clear]]."
+      },
+      "args": [
+        {
+          "type": "checkbox",
+          "name": "clear",
+          "required": true,
+          "title": {
+            "en": "Clear current text"
+          }
+        },
+        {
+          "type": "text",
+          "name": "text",
+          "required": true,
+          "title": {
+            "en": "Text"
+          }
+        },
+        {
+          "type": "range",
+          "name": "x",
+          "min": 0,
+          "max": 63,
+          "step": 1,
+          "required": true,
+          "title": {
+            "en": "X-Position"
+          }
+        },
+        {
+          "type": "range",
+          "name": "y",
+          "min": 0,
+          "max": 63,
+          "step": 1,
+          "required": true,
+          "title": {
+            "en": "Y-Position"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "direction",
+          "required": true,
+          "title": {
+            "en": "Scroll direction"
+          },
+          "values": [
+            {
+              "id": "0",
+              "title": {
+                "en": "Left"
+              }
+            },
+            {
+              "id": "1",
+              "title": {
+                "en": "Right"
+              }
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "name": "textWidth",
+          "min": 16,
+          "max": 63,
+          "step": 1,
+          "required": true,
+          "title": {
+            "en": "Text width"
+          }
+        },
+        {
+          "type": "range",
+          "name": "speed",
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "required": true,
+          "title": {
+            "en": "Scroll speed in ms"
+          }
+        },
+        {
+          "type": "text",
+          "name": "color",
+          "required": true,
+          "title": {
+            "en": "Color hex value"
+          }
+        },
+        {
+          "type": "dropdown",
+          "name": "align",
+          "required": true,
+          "title": {
+            "en": "Alignment"
+          },
+          "values": [
+            {
+              "id": "1",
+              "title": {
+                "en": "Left"
+              }
+            },
+            {
+              "id": "2",
+              "title": {
+                "en": "Middle"
+              }
+            },
+            {
+              "id": "3",
+              "title": {
+                "en": "Right"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "clear_text",
+      "title": {
+        "en": "Clear all rendered text"
+      }
+    }
+  ]
+}

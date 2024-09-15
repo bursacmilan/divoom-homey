@@ -1,0 +1,31 @@
+{
+  "type": "enum",
+  "title": { "en": "Channel" },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker",
+  "uiQuickAction": true,
+  "icon": "/assets/icon.svg",
+  "values": [
+    {
+      "id": "channel_0",
+      "title": { "en": "Faces" }
+    },
+    {
+      "id": "channel_1",
+      "title": { "en": "Cloud channel" }
+    },
+    {
+      "id": "channel_2",
+      "title": { "en": "Visualizer" }
+    },
+    {
+      "id": "channel_3",
+      "title": { "en": "Custom" }
+    },
+    {
+      "id": "channel_4",
+      "title": { "en": "Black screen" }
+    }
+  ]
+}
