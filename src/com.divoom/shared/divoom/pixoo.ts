@@ -1,8 +1,8 @@
 import { SimpleClass } from 'homey';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import sharp from 'sharp';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { decompressFrames, parseGIF } from 'gifuct-js';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { intToRGBA, Jimp } from 'jimp';
 import { DivoomApi } from './divoom-api';
 import { ResetHttpGifIdCommand } from '../pixoo-commands/reset-http-gif-id.command';
 import { SendHttpGifCommand } from '../pixoo-commands/send-http-gif.command';
@@ -24,6 +24,7 @@ import { DiscoveryApi } from '../discovery/discovery-api';
 import { SendRemoteCommand } from '../pixoo-commands/send-remote.command';
 import { PlayBuzzerCommand } from '../pixoo-commands/play-buzzer.command';
 import { DivoomCommand } from './divoom-command';
+import { CommandListCommand } from '../pixoo-commands/command-list.command';
 
 export class Pixoo {
     private readonly _divoomApi: DivoomApi;
@@ -160,7 +161,7 @@ export class Pixoo {
             );
         }
 
-        await this._divoomApi.addMultipleToCommandList(commands);
+        await this._divoomApi.addToCommandList(new CommandListCommand(commands));
     }
 
     private _parseColor(color: string | number[]): number[] {
@@ -193,16 +194,18 @@ export class Pixoo {
             throw new Error('Failed to fetch image');
         }
 
-        const buffer = await response.arrayBuffer();
-        const image = sharp(buffer)
-            .resize(64, 64, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-            .removeAlpha();
+        const image = await Jimp.read(Buffer.from(await response.arrayBuffer()));
+        image.contain({ h: 64, w: 64 });
+        image.background = 0x00000000;
 
-        const { data } = await image.raw().toBuffer({ resolveWithObject: true });
-        const pixelArray = [];
+        const pixelArray: number[][] = [];
 
-        for (let i = 0; i < data.length; i += 3) {
-            pixelArray.push([data[i], data[i + 1], data[i + 2]]);
+        // Loop through the pixels and extract RGB values
+        for (let y = 0; y < 64; y++) {
+            for (let x = 0; x < 64; x++) {
+                const color = intToRGBA(image.getPixelColor(x, y));
+                pixelArray.push([color.r, color.g, color.b]);
+            }
         }
 
         return pixelArray;
@@ -218,7 +221,7 @@ export class Pixoo {
         const fullWidth = gif.lsd.width;
         const fullHeight = gif.lsd.height;
         const previousFrame = Buffer.alloc(fullWidth * fullHeight * 4, 0);
-        const pixelArrays = [];
+        const pixelArrays: Array<Array<number[]>> = [];
 
         for (const frame of frames) {
             // Patch contains the pixel data, dims contains the frame's size and position
@@ -239,25 +242,22 @@ export class Pixoo {
                 }
             }
 
-            const resizedFrameBuffer = await sharp(previousFrame, {
-                raw: {
-                    width: fullWidth,
-                    height: fullHeight,
-                    channels: 4, // RGBA channels
-                },
-            })
-                .resize(64, 64, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-                .raw()
-                .toBuffer();
+            const jimpImage = new Jimp({
+                data: previousFrame,
+                width: fullWidth,
+                height: fullHeight,
+            });
+
+            jimpImage.contain({ h: 64, w: 64 });
+            jimpImage.background = 0x00000000;
 
             const pixelArray = [];
-            for (let i = 0; i < resizedFrameBuffer.length; i += 4) {
-                const r = resizedFrameBuffer[i];
-                const g = resizedFrameBuffer[i + 1];
-                const b = resizedFrameBuffer[i + 2];
-
-                // Ignore the alpha channel (resizedFrameBuffer[i + 3])
-                pixelArray.push([r, g, b]);
+            for (let y = 0; y < 64; y++) {
+                for (let x = 0; x < 64; x++) {
+                    const color = jimpImage.getPixelColor(x, y);
+                    const { r, g, b } = intToRGBA(color);
+                    pixelArray.push([r, g, b]);
+                }
             }
 
             pixelArrays.push(pixelArray);
