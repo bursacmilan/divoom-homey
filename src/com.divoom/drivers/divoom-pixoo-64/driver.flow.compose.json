@@ -3,7 +3,13 @@
     {
       "id": "send_image",
       "title": {
-        "en": "Display an image from the provided URL, automatically resized to 64x64 pixels."
+        "en": "Display image from a URL"
+      },
+      "titleFormatted": {
+        "en": "Display image from [[url]]"
+      },
+      "hint": {
+        "en": "The image will automatically be resized to 64x64 pixels."
       },
       "args": [
         {
@@ -22,7 +28,7 @@
         "en": "Play buzzer"
       },
       "titleFormatted": {
-        "en": "Play the buzzer for [[duration]] milliseconds."
+        "en": "Play buzzer for [[duration]]"
       },
       "args": [
         {
@@ -40,10 +46,10 @@
     {
       "id": "play_divoom",
       "title": {
-        "en": "Play a Divoom GIF by name"
+        "en": "Play Divoom GIF"
       },
       "titleFormatted": {
-        "en": "Play a Divoom GIF named [[name]] from the uploaded or liked community GIF collection."
+        "en": "Play Divoom GIF [[name]]"
       },
       "args": [
         {
@@ -62,7 +68,7 @@
         "en": "Set channel"
       },
       "titleFormatted": {
-        "en": "Set channel to [[channel]]."
+        "en": "Set channel [[channel]]."
       },
       "args": [
         {
@@ -100,10 +106,13 @@
     {
       "id": "send_gif",
       "title": {
-        "en": "Display a GIF from the provided URL"
+        "en": "Display GIF from a URL"
       },
       "titleFormatted": {
-        "en": "Display a GIF from the provided URL [[url]], automatically resized to 64x64 pixels and trimmed to the first 60 frames. Each frame should be displayed for [[speed]] milliseconds."
+        "en": "Display GIF from [[url]] for [[speed]] milliseconds."
+      },
+      "hint": {
+        "en": "The GIF will automatically be resized to 64x64 pixels and only the first 64 frames will be displayed."
       },
       "args": [
         {
@@ -130,10 +139,10 @@
     {
       "id": "set_timer",
       "title": {
-        "en": "Start a new timer"
+        "en": "Start timer"
       },
       "titleFormatted": {
-        "en": "Start a timer for [[minutes]] minutes and [[seconds]] seconds."
+        "en": "Start timer for [[minutes]] minutes and [[seconds]] seconds"
       },
       "args": [
         {
@@ -163,16 +172,19 @@
     {
       "id": "stop_timer",
       "title": {
-        "en": "Stop the current timer"
+        "en": "Stop timer"
+      },
+      "titleFormatted": {
+        "en": "Stop timer"
       }
     },
     {
       "id": "fill_screen",
       "title": {
-        "en": "Fill screen with a color"
+        "en": "Fill screen"
       },
       "titleFormatted": {
-        "en": "Fill the screen with the color [[hex]]."
+        "en": "Fill screen with [[hex]]."
       },
       "args": [
         {
@@ -188,10 +200,10 @@
     {
       "id": "draw_text",
       "title": {
-        "en": "Render a text"
+        "en": "Render text"
       },
       "titleFormatted": {
-        "en": "Render the text '[[text]]' in the color [[color]], positioned at X: [[x]] and Y: [[y]], with a width of [[textWidth]]. Scroll the text [[direction]] at a speed of [[speed]], aligned to the [[align]]. Clear the current text: [[clear]]."
+        "en": "Render text '[[text]]' in the color [[color]], positioned at X: [[x]] and Y: [[y]], with a width of [[textWidth]]. Scroll the text [[direction]] at a speed of [[speed]], aligned to the [[align]]. Clear the current text: [[clear]]."
       },
       "args": [
         {
@@ -317,7 +329,10 @@
     {
       "id": "clear_text",
       "title": {
-        "en": "Clear all rendered text"
+        "en": "Clear text"
+      },
+      "titleFormatted": {
+        "en": "Clear text"
       }
     }
   ]

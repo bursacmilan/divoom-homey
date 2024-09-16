@@ -20,5 +20,11 @@
   "author": {
     "name": "Milan Bursac",
     "email": "bursac.m@outlook.com"
-  }
+  },
+  "brandColor": "#000000",
+  "bugs": {
+    "url": "https://github.com/bursacmilan/divoom-homey/issues"
+  },
+  "source": "https://github.com/bursacmilan/divoom-homey",
+  "support": "https://github.com/bursacmilan/divoom-homey/issues/new"
 }
