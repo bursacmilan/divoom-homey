@@ -1,5 +1,8 @@
 {
   "1.0.0": {
     "en": "Initial release with support for the Divoom Pixoo64 device."
+  },
+  "1.0.1": {
+    "en": "Fixed an issue with the app icon displaying incorrectly."
   }
 }
