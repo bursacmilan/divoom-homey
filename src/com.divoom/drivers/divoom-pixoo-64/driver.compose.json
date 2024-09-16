@@ -3,17 +3,9 @@
     "en": "Pixoo 64"
   },
   "class": "light",
-  "capabilities": [
-    "onoff",
-    "dim",
-    "channel_capability"
-  ],
-  "platforms": [
-    "local"
-  ],
-  "connectivity": [
-    "lan"
-  ],
+  "capabilities": ["onoff", "dim", "channel_capability"],
+  "platforms": ["local"],
+  "connectivity": ["lan"],
   "images": {
     "small": "{{driverAssetsPath}}/images/small.png",
     "large": "{{driverAssetsPath}}/images/large.png",

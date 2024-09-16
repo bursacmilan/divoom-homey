@@ -4,18 +4,14 @@
   "version": "1.0.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
-  "platforms": [
-    "local"
-  ],
+  "platforms": ["local"],
   "name": {
     "en": "Divoom"
   },
   "description": {
     "en": "Adds support for Divoom devices."
   },
-  "category": [
-    "lights"
-  ],
+  "category": ["lights"],
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
@@ -420,17 +416,9 @@
         "en": "Pixoo 64"
       },
       "class": "light",
-      "capabilities": [
-        "onoff",
-        "dim",
-        "channel_capability"
-      ],
-      "platforms": [
-        "local"
-      ],
-      "connectivity": [
-        "lan"
-      ],
+      "capabilities": ["onoff", "dim", "channel_capability"],
+      "platforms": ["local"],
+      "connectivity": ["lan"],
       "images": {
         "small": "/drivers/divoom-pixoo-64/assets/images/small.png",
         "large": "/drivers/divoom-pixoo-64/assets/images/large.png",
