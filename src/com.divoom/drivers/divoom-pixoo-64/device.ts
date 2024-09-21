@@ -6,24 +6,27 @@ import { ChannelHelper } from '../../shared/pixoo-commands/models/channel.helper
 import { Pixoo } from '../../shared/divoom/pixoo';
 import { TextScrollEnum } from '../../shared/pixoo-commands/models/text-scroll.enum';
 import { TextAlignEnum } from '../../shared/pixoo-commands/models/text-align.enum';
+import { DiscoveryApi } from '../../shared/discovery/discovery-api';
 
 export class Pixoo64Device extends Homey.Device {
+    public deviceId?: string;
+    public macAddress?: string;
     private _pixoo?: Pixoo;
 
     public async onInit(): Promise<void> {
         this._sendCommandList();
 
         const ipAddress = this.getSetting('ipAddress') as string;
-        const deviceId = this.getSetting('deviceId') as string;
-        const macAddress = this.getSetting('macAddress') as string;
+        this.deviceId = this.getSetting('deviceId') as string;
+        this.macAddress = this.getSetting('macAddress') as string;
 
-        if (!ipAddress || !deviceId || !macAddress) {
+        if (!ipAddress || !this.deviceId || !this.macAddress) {
             this._pixoo = undefined;
             return;
         }
 
-        this.log(`ipAddress: ${ipAddress}, deviceId: ${deviceId}, macAddress: ${macAddress}`);
-        this._pixoo = new Pixoo(ipAddress, deviceId, macAddress, this, 64);
+        this.log(`ipAddress: ${ipAddress}, deviceId: ${this.deviceId}, macAddress: ${this.macAddress}`);
+        this._pixoo = new Pixoo(ipAddress, this.deviceId, this.macAddress, this, 64);
         await this._pixoo.init();
 
         const currentState = await this._pixoo.getAllConf();
@@ -92,6 +95,10 @@ export class Pixoo64Device extends Homey.Device {
         await this._pixoo?.playBuzzer(time);
     }
 
+    public getDiscoveryApi(): DiscoveryApi | undefined {
+        return this._pixoo?.getDiscoveryApi();
+    }
+
     public async drawText(
         x: number,
         y: number,
@@ -137,6 +144,9 @@ export class Pixoo64Device extends Homey.Device {
         }
 
         this._pixoo = new Pixoo(ipAddress, deviceId, macAddress, this, 64);
+        this.deviceId = deviceId;
+        this.macAddress = macAddress;
+
         await this._pixoo.init();
     }
 }

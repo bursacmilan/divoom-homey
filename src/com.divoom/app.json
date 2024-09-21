@@ -93,7 +93,7 @@
           "en": "Play Divoom GIF"
         },
         "titleFormatted": {
-          "en": "Play Divoom GIF [[name]]"
+          "en": "Play Divoom GIF [[name]] [[name2]]"
         },
         "args": [
           {
@@ -104,6 +104,14 @@
           {
             "type": "text",
             "name": "name",
+            "required": true,
+            "title": {
+              "en": "Name"
+            }
+          },
+          {
+            "type": "autocomplete",
+            "name": "name2",
             "required": true,
             "title": {
               "en": "Name"

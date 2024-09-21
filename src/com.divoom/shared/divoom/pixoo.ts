@@ -48,6 +48,10 @@ export class Pixoo {
         this._macAddress = macAddress;
     }
 
+    public getDiscoveryApi(): DiscoveryApi {
+        return this._discoveryApi;
+    }
+
     public async init(): Promise<void> {
         await this.clearText();
         await this.clearBuffer();
@@ -57,14 +61,8 @@ export class Pixoo {
         await this._divoomApi.sendCurrentCommandList(this._simpleClass);
     }
 
-    public async playDivoomGif(fileName: string): Promise<void> {
-        const devices = await this._discoveryApi.getAllImages(this._deviceId, this._macAddress, this._simpleClass);
-        const file = devices.find(f => f.FileName === fileName);
-        if (!file) {
-            throw new Error('Divoom-GIF with name not found');
-        }
-
-        await this._divoomApi.addToCommandList(new SendRemoteCommand(file.FileId));
+    public async playDivoomGif(fileId: string): Promise<void> {
+        await this._divoomApi.addToCommandList(new SendRemoteCommand(fileId));
     }
 
     public getAllConf(): Promise<AllConfModel> {

@@ -8,6 +8,28 @@ import { DiscoveryApi } from '../../shared/discovery/discovery-api';
 class Pixoo64Driver extends Homey.Driver {
     public onInit(): Promise<void> {
         this.homey.flow
+            .getActionCard('play_divoom')
+            .registerArgumentAutocompleteListener('name', async (query, args: { device: Pixoo64Device }) => {
+                const discoveryApi = args.device.getDiscoveryApi();
+                if (discoveryApi === undefined || args.device.deviceId === undefined || args.device.macAddress === undefined) {
+                    return [];
+                }
+
+                query = query.toLowerCase();
+
+                const images = await discoveryApi.getAllImages(args.device.deviceId, args.device.macAddress, this);
+                return images
+                    .filter(i => i.FileName.toLowerCase().includes(query))
+                    .map(image => {
+                        return {
+                            name: image.FileName,
+                            id: image.FileId,
+                        };
+                    })
+                    .sort((a, b) => a.name.localeCompare(b.name));
+            });
+
+        this.homey.flow
             .getActionCard('set_timer')
             .registerRunListener(async (args: { device: Pixoo64Device; minutes: number; seconds: number }) => {
                 await args.device.startTimer(args.minutes ?? 0, args.seconds ?? 0);
@@ -29,8 +51,8 @@ class Pixoo64Driver extends Homey.Driver {
             await args.device.sendImageAndPush(args.url);
         });
 
-        this.homey.flow.getActionCard('play_divoom').registerRunListener(async (args: { device: Pixoo64Device; name: string }) => {
-            await args.device.playDivoomGif(args.name);
+        this.homey.flow.getActionCard('play_divoom').registerRunListener(async (args: { device: Pixoo64Device; name: { id: string } }) => {
+            await args.device.playDivoomGif(args.name.id);
         });
 
         this.homey.flow.getActionCard('play_buzzer').registerRunListener(async (args: { device: Pixoo64Device; duration: number }) => {

@@ -53,7 +53,7 @@
       },
       "args": [
         {
-          "type": "text",
+          "type": "autocomplete",
           "name": "name",
           "required": true,
           "title": {
