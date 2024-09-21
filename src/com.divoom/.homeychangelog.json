@@ -4,5 +4,8 @@
   },
   "1.0.1": {
     "en": "Fixed an issue with the app icon displaying incorrectly."
+  },
+  "1.0.2": {
+    "en": "Updated app and driver image."
   }
 }
