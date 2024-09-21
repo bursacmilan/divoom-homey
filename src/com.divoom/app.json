@@ -93,7 +93,7 @@
           "en": "Play Divoom GIF"
         },
         "titleFormatted": {
-          "en": "Play Divoom GIF [[name]] [[name2]]"
+          "en": "Play Divoom GIF [[name]]"
         },
         "args": [
           {
@@ -102,16 +102,8 @@
             "filter": "driver_id=divoom-pixoo-64"
           },
           {
-            "type": "text",
-            "name": "name",
-            "required": true,
-            "title": {
-              "en": "Name"
-            }
-          },
-          {
             "type": "autocomplete",
-            "name": "name2",
+            "name": "name",
             "required": true,
             "title": {
               "en": "Name"
