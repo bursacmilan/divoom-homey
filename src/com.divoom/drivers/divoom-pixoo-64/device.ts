@@ -14,7 +14,7 @@ export class Pixoo64Device extends Homey.Device {
     private _pixoo?: Pixoo;
 
     public async onInit(): Promise<void> {
-        this._sendCommandList();
+        this._registerCapabilityListener();
 
         const ipAddress = this.getSetting('ipAddress') as string;
         this.deviceId = this.getSetting('deviceId') as string;
@@ -22,44 +22,17 @@ export class Pixoo64Device extends Homey.Device {
 
         if (!ipAddress || !this.deviceId || !this.macAddress) {
             this._pixoo = undefined;
+            await this.setUnavailable('No IP address, device ID or MAC address set');
             return;
         }
 
         this.log(`ipAddress: ${ipAddress}, deviceId: ${this.deviceId}, macAddress: ${this.macAddress}`);
+        await this.setAvailable();
+
         this._pixoo = new Pixoo(ipAddress, this.deviceId, this.macAddress, this, 64);
         await this._pixoo.init();
 
-        const currentState = await this._pixoo.getAllConf();
-        const currentChannel = await this._pixoo.getCurrentChannel();
-        await this.setCapabilityValue(Capabilities.channel, ChannelHelper.divoomChannelToHomeyChannelOrDefault(currentChannel.SelectIndex));
-        await this.setCapabilityValue(Capabilities.onOff, currentState.LightSwitch !== 0);
-        await this.setCapabilityValue(Capabilities.dim, currentState.Brightness / 100);
-
-        this.registerCapabilityListener(Capabilities.onOff, async value => {
-            const valueAsBool = value as boolean;
-            await this._pixoo?.setOnOff(valueAsBool);
-        });
-
-        this.registerCapabilityListener(Capabilities.dim, async value => {
-            const valueAsNumber = value as number;
-            await this._pixoo?.setBrightness(Math.round(valueAsNumber * 100));
-        });
-
-        this.registerCapabilityListener(Capabilities.channel, async value => {
-            await this.setChannel(value as string);
-        });
-    }
-
-    private _sendCommandList(): void {
-        this.homey.setInterval(async () => {
-            if (!this._pixoo) {
-                return;
-            }
-
-            try {
-                await this._pixoo.sendCurrentCommandList();
-            } catch (_) {}
-        }, 500);
+        await this._loadCurrentStateAndSetCapabilities(this._pixoo);
     }
 
     public async setChannel(homeyChannel: string): Promise<void> {
@@ -97,6 +70,36 @@ export class Pixoo64Device extends Homey.Device {
 
     public getDiscoveryApi(): DiscoveryApi | undefined {
         return this._pixoo?.getDiscoveryApi();
+    }
+
+    private _registerCapabilityListener(): void {
+        this.registerCapabilityListener(Capabilities.onOff, async value => {
+            const valueAsBool = value as boolean;
+            await this._pixoo?.setOnOff(valueAsBool);
+        });
+
+        this.registerCapabilityListener(Capabilities.dim, async value => {
+            const valueAsNumber = value as number;
+            await this._pixoo?.setBrightness(Math.round(valueAsNumber * 100));
+        });
+
+        this.registerCapabilityListener(Capabilities.channel, async value => {
+            await this.setChannel(value as string);
+        });
+    }
+
+    private async _loadCurrentStateAndSetCapabilities(pixoo: Pixoo): Promise<void> {
+        try {
+            const currentState = await pixoo.getAllConf();
+            const currentChannel = await pixoo.getCurrentChannel();
+
+            await this.setCapabilityValue(
+                Capabilities.channel,
+                ChannelHelper.divoomChannelToHomeyChannelOrDefault(currentChannel.SelectIndex),
+            );
+            await this.setCapabilityValue(Capabilities.onOff, currentState.LightSwitch !== 0);
+            await this.setCapabilityValue(Capabilities.dim, currentState.Brightness / 100);
+        } catch (e) {}
     }
 
     public async drawText(
@@ -140,14 +143,20 @@ export class Pixoo64Device extends Homey.Device {
 
         if (!ipAddress || !deviceId || !macAddress) {
             this._pixoo = undefined;
+            await this.setUnavailable('No IP address, device ID or MAC address set');
             return;
         }
 
-        this._pixoo = new Pixoo(ipAddress, deviceId, macAddress, this, 64);
         this.deviceId = deviceId;
         this.macAddress = macAddress;
 
+        this.log(`ipAddress: ${ipAddress}, deviceId: ${this.deviceId}, macAddress: ${this.macAddress}`);
+        await this.setAvailable();
+
+        this._pixoo = new Pixoo(ipAddress, deviceId, macAddress, this, 64);
         await this._pixoo.init();
+
+        await this._loadCurrentStateAndSetCapabilities(this._pixoo);
     }
 }
 

@@ -7,11 +7,8 @@ import { DivoomResponseHelper } from './divoom-response-helper';
 
 export class DivoomApi {
     private readonly _apiSemaphore = new Semaphore(1);
-    private readonly _commandSemaphore = new Semaphore(1);
 
     private readonly _ip: string;
-
-    private _commands: DivoomCommand[] = [];
 
     constructor(ip: string) {
         this._ip = ip;
@@ -19,35 +16,17 @@ export class DivoomApi {
 
     public async sendCommandImmediatelyAndGet<T extends DivoomResponse>(command: DivoomCommand, simpleClass: SimpleClass): Promise<T> {
         const { result } = await this._sendCommand<T>(command, simpleClass);
-        return result;
+        return result ?? ({} as T);
     }
 
-    public async addToCommandList(command: DivoomCommand): Promise<void> {
-        this._commands.push(command);
-        return Promise.resolve();
-    }
-
-    public async addMultipleToCommandList(commands: DivoomCommand[]): Promise<void> {
-        this._commands.push(...commands);
-        return Promise.resolve();
-    }
-
-    public async sendCurrentCommandList(simpleClass: SimpleClass): Promise<void> {
-        await this._commandSemaphore.aquire();
-        const commands = [...this._commands];
-        this._commands = [];
-        this._commandSemaphore.release();
-
-        for (const command of commands) {
-            await this._sendCommand(command, simpleClass);
-            await new Promise(resolve => setTimeout(resolve, 500));
-        }
+    public async sendCommand(command: DivoomCommand, simpleClass: SimpleClass): Promise<void> {
+        await this._sendCommand(command, simpleClass);
     }
 
     private async _sendCommand<T extends DivoomResponse>(
         command: DivoomCommand,
         simpleClass: SimpleClass,
-    ): Promise<{ result: T; success: boolean }> {
+    ): Promise<{ result: T | undefined; success: boolean }> {
         try {
             await this._apiSemaphore.aquire();
             const commandString = command.toJson();
@@ -64,7 +43,11 @@ export class DivoomApi {
             }
 
             return { result: parsedResponse, success: isSuccess };
+        } catch (error) {
+            simpleClass.error(`Error while sending command ${command.toJson()}`, error);
+            return { result: undefined, success: false };
         } finally {
+            await new Promise(resolve => setTimeout(resolve, 500));
             this._apiSemaphore.release();
         }
     }
