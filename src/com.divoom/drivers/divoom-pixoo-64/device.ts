@@ -7,6 +7,7 @@ import { Pixoo } from '../../shared/divoom/pixoo';
 import { TextScrollEnum } from '../../shared/pixoo-commands/models/text-scroll.enum';
 import { TextAlignEnum } from '../../shared/pixoo-commands/models/text-align.enum';
 import { DiscoveryApi } from '../../shared/discovery/discovery-api';
+import { TextItem } from '../../shared/pixoo-commands/models/text-item';
 
 export class Pixoo64Device extends Homey.Device {
     public deviceId?: string;
@@ -33,6 +34,18 @@ export class Pixoo64Device extends Homey.Device {
         await this._pixoo.init();
 
         await this._loadCurrentStateAndSetCapabilities(this._pixoo);
+    }
+
+    public async createOrClearTextList(textListId: string): Promise<void> {
+        await this._pixoo?.createOrClearTextList(textListId);
+    }
+
+    public async addTextToTextList(textListId: string, textItem: TextItem): Promise<void> {
+        await this._pixoo?.addTextToTextList(textListId, textItem);
+    }
+
+    public async renderTextList(textListId: string): Promise<void> {
+        await this._pixoo?.renderTextList(textListId);
     }
 
     public async setChannel(homeyChannel: string): Promise<void> {

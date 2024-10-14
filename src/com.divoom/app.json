@@ -40,7 +40,7 @@
           "en": "Display image from a URL"
         },
         "titleFormatted": {
-          "en": "Display image from [[url]]"
+          "en": "Display image from '[[url]]'"
         },
         "hint": {
           "en": "The image will automatically be resized to 64x64 pixels."
@@ -67,7 +67,7 @@
           "en": "Play buzzer"
         },
         "titleFormatted": {
-          "en": "Play buzzer for [[duration]]"
+          "en": "Play buzzer for '[[duration]]'"
         },
         "args": [
           {
@@ -93,7 +93,7 @@
           "en": "Play Divoom GIF"
         },
         "titleFormatted": {
-          "en": "Play Divoom GIF [[name]]"
+          "en": "Play Divoom GIF '[[name]]'"
         },
         "args": [
           {
@@ -117,7 +117,7 @@
           "en": "Set channel"
         },
         "titleFormatted": {
-          "en": "Set channel [[channel]]."
+          "en": "Set channel '[[channel]]'."
         },
         "args": [
           {
@@ -173,7 +173,7 @@
           "en": "Display GIF from a URL"
         },
         "titleFormatted": {
-          "en": "Display GIF from [[url]] for [[speed]] milliseconds."
+          "en": "Display GIF from '[[url]]' for '[[speed]]' milliseconds."
         },
         "hint": {
           "en": "The GIF will automatically be resized to 64x64 pixels and only the first 64 frames will be displayed."
@@ -211,7 +211,7 @@
           "en": "Start timer"
         },
         "titleFormatted": {
-          "en": "Start timer for [[minutes]] minutes and [[seconds]] seconds"
+          "en": "Start timer for '[[minutes]]' minutes and '[[seconds]]' seconds"
         },
         "args": [
           {
@@ -265,7 +265,7 @@
           "en": "Fill screen"
         },
         "titleFormatted": {
-          "en": "Fill screen with [[hex]]."
+          "en": "Fill screen with '[[hex]]'."
         },
         "args": [
           {
@@ -289,7 +289,7 @@
           "en": "Render text"
         },
         "titleFormatted": {
-          "en": "Render text '[[text]]' in the color [[color]], positioned at X: [[x]] and Y: [[y]], with a width of [[textWidth]]. Scroll the text [[direction]] at a speed of [[speed]], aligned to the [[align]]. Clear the current text: [[clear]]."
+          "en": "Render text '[[text]]' in the color '[[color]]', positioned at X: '[[x]]' and Y: '[[y]]', with a width of '[[textWidth]]'. Scroll the text '[[direction]]' at a speed of '[[speed]]', aligned to the '[[align]]'. Clear the current text: '[[clear]]'."
         },
         "args": [
           {
@@ -430,6 +430,355 @@
             "type": "device",
             "name": "device",
             "filter": "driver_id=divoom-pixoo-64"
+          }
+        ]
+      },
+      {
+        "id": "create_text_list",
+        "title": {
+          "en": "Create or clear text-list"
+        },
+        "titleFormatted": {
+          "en": "Create or clear text-list with id '[[id]]'."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "text",
+            "name": "id",
+            "required": true,
+            "title": {
+              "en": "Text-list ID"
+            }
+          }
+        ]
+      },
+      {
+        "id": "render_text_list",
+        "title": {
+          "en": "Render text-list"
+        },
+        "titleFormatted": {
+          "en": "Render text-list with id '[[id]]'."
+        },
+        "hint": {
+          "en": "Start by adding text to the list using the \"Add text to text-list\" flow."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "text",
+            "name": "id",
+            "required": true,
+            "title": {
+              "en": "Text-list ID"
+            }
+          }
+        ]
+      },
+      {
+        "id": "add_text_to_list",
+        "title": {
+          "en": "Add text to text-list"
+        },
+        "titleFormatted": {
+          "en": "Add text to text-list with id '[[id]]'. Add text '[[text]]' with the type '[[type]]' in the color '[[color]]', positioned at X: '[[x]]' and Y: '[[y]]', with a width of '[[textWidth]]' and height of '[[textHeight]]'. Use the font '[[font]]'. Scroll the text '[[direction]]' at a speed of '[[speed]]', aligned to the '[[align]]'."
+        },
+        "hint": {
+          "en": "Once you've populated the list with all the texts, use the \"Render text-list\" flow to display the entire list in one go."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "text",
+            "name": "id",
+            "required": true,
+            "title": {
+              "en": "Text-list ID"
+            }
+          },
+          {
+            "type": "text",
+            "name": "text",
+            "required": false,
+            "title": {
+              "en": "Text"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "type",
+            "required": true,
+            "title": {
+              "en": "Display-Type"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "Displays Current Second"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "Displays Current Minute"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "Displays Current Hour"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "Displays Time with AM/PM"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "Displays Hour and Minute"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "Displays Hour, Minute, and Second"
+                }
+              },
+              {
+                "id": "7",
+                "title": {
+                  "en": "Displays Current Year"
+                }
+              },
+              {
+                "id": "8",
+                "title": {
+                  "en": "Displays Current Day"
+                }
+              },
+              {
+                "id": "9",
+                "title": {
+                  "en": "Displays Current Month"
+                }
+              },
+              {
+                "id": "10",
+                "title": {
+                  "en": "Displays Month and Year"
+                }
+              },
+              {
+                "id": "11",
+                "title": {
+                  "en": "Displays Month and Day in English"
+                }
+              },
+              {
+                "id": "12",
+                "title": {
+                  "en": "Displays Day, Month, and Year"
+                }
+              },
+              {
+                "id": "13",
+                "title": {
+                  "en": "Displays Abbreviated Weekday (SU, MO, TU)"
+                }
+              },
+              {
+                "id": "14",
+                "title": {
+                  "en": "Displays 3-Letter Weekday Names (SUN, MON)"
+                }
+              },
+              {
+                "id": "15",
+                "title": {
+                  "en": "Displays Full Weekday Names (SUNDAY, MONDAY)"
+                }
+              },
+              {
+                "id": "16",
+                "title": {
+                  "en": "Displays Abbreviated Month (JAN, FEB)"
+                }
+              },
+              {
+                "id": "17",
+                "title": {
+                  "en": "Displays Temperature"
+                }
+              },
+              {
+                "id": "18",
+                "title": {
+                  "en": "Displays Today’s Max Temperature"
+                }
+              },
+              {
+                "id": "19",
+                "title": {
+                  "en": "Displays Today’s Min Temperature"
+                }
+              },
+              {
+                "id": "20",
+                "title": {
+                  "en": "Displays Current Weather Condition"
+                }
+              },
+              {
+                "id": "21",
+                "title": {
+                  "en": "Displays Noise Level"
+                }
+              },
+              {
+                "id": "22",
+                "title": {
+                  "en": "Displays a Custom Text"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "color",
+            "required": true,
+            "title": {
+              "en": "Color hex value"
+            }
+          },
+          {
+            "type": "range",
+            "name": "x",
+            "min": 0,
+            "max": 63,
+            "step": 1,
+            "required": true,
+            "title": {
+              "en": "X-Position"
+            }
+          },
+          {
+            "type": "range",
+            "name": "y",
+            "min": 0,
+            "max": 63,
+            "step": 1,
+            "required": true,
+            "title": {
+              "en": "Y-Position"
+            }
+          },
+          {
+            "type": "range",
+            "name": "textWidth",
+            "min": 1,
+            "max": 63,
+            "step": 1,
+            "required": true,
+            "title": {
+              "en": "Text width"
+            }
+          },
+          {
+            "type": "range",
+            "name": "textHeight",
+            "min": 1,
+            "max": 63,
+            "step": 1,
+            "required": true,
+            "title": {
+              "en": "Text height"
+            }
+          },
+          {
+            "type": "autocomplete",
+            "name": "font",
+            "required": true,
+            "title": {
+              "en": "Font"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "direction",
+            "required": true,
+            "title": {
+              "en": "Scroll direction"
+            },
+            "values": [
+              {
+                "id": "0",
+                "title": {
+                  "en": "Left"
+                }
+              },
+              {
+                "id": "1",
+                "title": {
+                  "en": "Right"
+                }
+              }
+            ]
+          },
+          {
+            "type": "range",
+            "name": "speed",
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "required": true,
+            "title": {
+              "en": "Scroll speed in ms"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "align",
+            "required": true,
+            "title": {
+              "en": "Alignment"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "Left"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "Middle"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "Right"
+                }
+              }
+            ]
           }
         ]
       }

@@ -4,6 +4,7 @@ import { Pixoo64Device } from './device';
 import { TextScrollEnum } from '../../shared/pixoo-commands/models/text-scroll.enum';
 import { TextAlignEnum } from '../../shared/pixoo-commands/models/text-align.enum';
 import { DiscoveryApi } from '../../shared/discovery/discovery-api';
+import { TextItem } from '../../shared/pixoo-commands/models/text-item';
 
 class Pixoo64Driver extends Homey.Driver {
     public onInit(): Promise<void> {
@@ -62,6 +63,70 @@ class Pixoo64Driver extends Homey.Driver {
         this.homey.flow.getActionCard('set_channel').registerRunListener(async (args: { device: Pixoo64Device; channel: string }) => {
             await args.device.setChannel(args.channel);
         });
+
+        this.homey.flow.getActionCard('create_text_list').registerRunListener(async (args: { device: Pixoo64Device; id: string }) => {
+            await args.device.createOrClearTextList(args.id);
+        });
+
+        this.homey.flow.getActionCard('render_text_list').registerRunListener(async (args: { device: Pixoo64Device; id: string }) => {
+            await args.device.renderTextList(args.id);
+        });
+
+        this.homey.flow
+            .getActionCard('add_text_to_list')
+            .registerArgumentAutocompleteListener('font', async (query, args: { device: Pixoo64Device }) => {
+                const discoveryApi = args.device.getDiscoveryApi();
+                if (discoveryApi === undefined) {
+                    return [];
+                }
+
+                query = query.toLowerCase();
+
+                const images = await discoveryApi.getAllFonts(this);
+                return images
+                    .filter(i => i.displayText.toLowerCase().includes(query))
+                    .map(font => {
+                        return {
+                            name: font.displayText,
+                            id: font.id,
+                        };
+                    })
+                    .sort((a, b) => a.name.localeCompare(b.name));
+            })
+            .registerRunListener(
+                async (args: {
+                    device: Pixoo64Device;
+                    id: string;
+                    text?: string;
+                    type: string;
+                    color: string;
+                    x: number;
+                    y: number;
+                    textWidth: number;
+                    textHeight: number;
+                    font: { id: string };
+                    direction: string;
+                    speed: number;
+                    align: string;
+                }) => {
+                    await args.device.addTextToTextList(
+                        args.id,
+                        new TextItem(
+                            +args.type,
+                            args.x,
+                            args.y,
+                            +args.direction,
+                            +args.font.id,
+                            args.textWidth,
+                            args.textHeight,
+                            args.text ?? '',
+                            args.speed,
+                            args.color,
+                            +args.align,
+                        ),
+                    );
+                },
+            );
 
         this.homey.flow
             .getActionCard('send_gif')

@@ -25,6 +25,8 @@ import { SendRemoteCommand } from '../pixoo-commands/send-remote.command';
 import { PlayBuzzerCommand } from '../pixoo-commands/play-buzzer.command';
 import { DivoomCommand } from './divoom-command';
 import { CommandListCommand } from '../pixoo-commands/command-list.command';
+import { TextItem } from '../pixoo-commands/models/text-item';
+import { SendHttpItemListCommand } from '../pixoo-commands/send-http-item-list.command';
 
 export class Pixoo {
     private readonly _divoomApi: DivoomApi;
@@ -34,6 +36,7 @@ export class Pixoo {
     private readonly _size: number;
     private readonly _deviceId: string;
     private readonly _macAddress: string;
+    private readonly _textLists: Map<string, TextItem[]> = new Map<string, TextItem[]>();
 
     private _counter: number = 0;
     private _textCounter: number = 0;
@@ -55,6 +58,30 @@ export class Pixoo {
     public async init(): Promise<void> {
         await this.clearText();
         await this.clearBuffer();
+    }
+
+    public async createOrClearTextList(textListId: string): Promise<void> {
+        this._textLists.set(textListId, []);
+        await Promise.resolve();
+    }
+
+    public async addTextToTextList(textListId: string, textItem: TextItem): Promise<void> {
+        if (!this._textLists.has(textListId)) {
+            await this.createOrClearTextList(textListId);
+        }
+
+        this._textLists.get(textListId)?.push(textItem);
+    }
+
+    public async renderTextList(textListId: string): Promise<void> {
+        const textItems = this._textLists.get(textListId);
+        if (!textItems) {
+            return;
+        }
+
+        await this.clearText();
+        await this._divoomApi.sendCommand(new SendHttpItemListCommand(textItems), this._simpleClass);
+        this._textLists.delete(textListId);
     }
 
     public async playDivoomGif(fileId: string): Promise<void> {

@@ -1,37 +1,37 @@
-import { DivoomCommand } from '../divoom/divoom-command';
-import { TextScrollEnum } from './models/text-scroll.enum';
-import { TextAlignEnum } from './models/text-align.enum';
-
-export class SendHttpTextCommand extends DivoomCommand {
-    public textId: number;
+export class TextItem {
+    public textId: number = 0;
+    public type: number;
     public x: number;
     public y: number;
-    public dir: TextScrollEnum;
-    public font = 4;
+    public dir: number;
+    public font: number;
     public textWidth: number;
-    public textString: string;
-    public speed: number;
+    public textHeight: number;
+    public textString: string; // Max 512 characters
+    public speed: number; // 1 - 100
     public color: string;
-    public align: TextAlignEnum;
+    public align: number; // 1 = left, 2 = middle, 3 = right
 
     constructor(
-        textId: number,
+        type: number,
         x: number,
         y: number,
-        dir: TextScrollEnum,
+        dir: number,
+        font: number,
         textWidth: number,
+        textHeight: number,
         textString: string,
         speed: number,
         color: string,
-        align: TextAlignEnum,
+        align: number,
     ) {
-        super('Draw/SendHttpText');
-        this.textId = textId;
+        this.type = type;
         this.x = x;
         this.y = y;
         this.dir = dir;
-        this.font = 1;
+        this.font = font;
         this.textWidth = textWidth;
+        this.textHeight = textHeight;
         this.textString = textString;
         this.speed = speed;
         this.color = color;
@@ -39,12 +39,6 @@ export class SendHttpTextCommand extends DivoomCommand {
 
         if (!this.color.startsWith('#')) {
             this.color = `#${color}`;
-        }
-
-        if (this.textWidth < 16) {
-            this.textWidth = 16;
-        } else if (this.textWidth >= 64) {
-            this.textWidth = 63;
         }
 
         if (this.textString.length >= 512) {
