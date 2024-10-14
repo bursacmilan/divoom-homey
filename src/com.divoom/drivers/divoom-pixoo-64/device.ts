@@ -125,6 +125,7 @@ export class Pixoo64Device extends Homey.Device {
         textColor: string,
         textAlignment: TextAlignEnum,
         clearCurrentText: boolean,
+        font: number,
     ): Promise<void> {
         await this._pixoo?.drawText(
             x,
@@ -136,6 +137,7 @@ export class Pixoo64Device extends Homey.Device {
             textColor,
             textAlignment,
             clearCurrentText,
+            font,
         );
     }
 

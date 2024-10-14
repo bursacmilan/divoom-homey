@@ -148,6 +148,7 @@ class Pixoo64Driver extends Homey.Driver {
                     color: string;
                     align: string;
                     clear: boolean;
+                    font: string;
                 }) => {
                     await args.device.drawText(
                         args.x,
@@ -159,6 +160,7 @@ class Pixoo64Driver extends Homey.Driver {
                         args.color,
                         +args.align as TextAlignEnum,
                         args.clear,
+                        +args.font ? +args.font : 1,
                     );
                 },
             );

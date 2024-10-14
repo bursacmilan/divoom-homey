@@ -81,7 +81,7 @@ export class Pixoo {
 
         await this.clearText();
         await this._divoomApi.sendCommand(new SendHttpItemListCommand(textItems), this._simpleClass);
-        this._textLists.delete(textListId);
+        this._textLists.clear();
     }
 
     public async playDivoomGif(fileId: string): Promise<void> {
@@ -148,13 +148,14 @@ export class Pixoo {
         color: string,
         align: TextAlignEnum,
         clear: boolean,
+        font: number,
     ): Promise<void> {
         if (this._textCounter === 20 || clear) {
             await this.clearText();
         }
 
         await this._divoomApi.sendCommand(
-            new SendHttpTextCommand(this._textCounter++, x, y, dir, textWidth, textString, speed, color, align),
+            new SendHttpTextCommand(this._textCounter++, x, y, dir, textWidth, textString, speed, color, align, font),
             this._simpleClass,
         );
     }

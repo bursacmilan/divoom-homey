@@ -7,7 +7,7 @@ export class SendHttpTextCommand extends DivoomCommand {
     public x: number;
     public y: number;
     public dir: TextScrollEnum;
-    public font = 4;
+    public font: number;
     public textWidth: number;
     public textString: string;
     public speed: number;
@@ -24,13 +24,14 @@ export class SendHttpTextCommand extends DivoomCommand {
         speed: number,
         color: string,
         align: TextAlignEnum,
+        font: number,
     ) {
         super('Draw/SendHttpText');
         this.textId = textId;
         this.x = x;
         this.y = y;
         this.dir = dir;
-        this.font = 1;
+        this.font = font;
         this.textWidth = textWidth;
         this.textString = textString;
         this.speed = speed;

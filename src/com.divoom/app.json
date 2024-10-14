@@ -289,13 +289,68 @@
           "en": "Render text"
         },
         "titleFormatted": {
-          "en": "Render text '[[text]]' in the color '[[color]]', positioned at X: '[[x]]' and Y: '[[y]]', with a width of '[[textWidth]]'. Scroll the text '[[direction]]' at a speed of '[[speed]]', aligned to the '[[align]]'. Clear the current text: '[[clear]]'."
+          "en": "Render text '[[text]]' in the color '[[color]]', positioned at X: '[[x]]' and Y: '[[y]]', with a width of '[[textWidth]]'. Use the font '[[font]]'. Scroll the text '[[direction]]' at a speed of '[[speed]]', aligned to the '[[align]]'. Clear the current text: '[[clear]]'."
+        },
+        "hint": {
+          "en": "For more control over the fonts, use the \"Add text to text-list\" flow."
         },
         "args": [
           {
             "type": "device",
             "name": "device",
             "filter": "driver_id=divoom-pixoo-64"
+          },
+          {
+            "type": "dropdown",
+            "name": "font",
+            "required": true,
+            "title": {
+              "en": "Font"
+            },
+            "values": [
+              {
+                "id": "1",
+                "title": {
+                  "en": "Font 1"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "Font 2"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "Font 3"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "Font 4"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "Font 5"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "Font 6"
+                }
+              },
+              {
+                "id": "7",
+                "title": {
+                  "en": "Font 7"
+                }
+              }
+            ]
           },
           {
             "type": "checkbox",
