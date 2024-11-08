@@ -7,5 +7,8 @@
   },
   "1.0.2": {
     "en": "Updated app and driver image."
+  },
+  "1.1.0": {
+    "en": "Display multiple texts simultaneously on the Pixoo64 device."
   }
 }
